@@ -1,5 +1,5 @@
 
-
+var interval = null;
 var secs = 0,
     mins = 0;
 var workMode = true;
@@ -9,6 +9,9 @@ function start() {
     var task = (String)(document.getElementById("input-task").value);
     work = (document.getElementById("input-work").value)/1;
     rest = (document.getElementById("input-rest").value)/1;
+    if(interval !== null) {
+        clearInterval(interval);
+    }
     createClock(task, work, rest);
     console.log(work+rest);
     console.log("starting " + task + " " + work + "/" + rest);
@@ -26,7 +29,7 @@ function createClock(task, work, rest) {
     secs = 0;
     mins = 0;
     workMode = true;
-    setInterval(tick, 1000);
+    interval = setInterval(tick, 1000);
 }
 
 function tick() {
