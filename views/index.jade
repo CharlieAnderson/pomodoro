@@ -4,11 +4,15 @@ block content
   h1= title
   form(name="enter timer settings", method="post")
     div.input
-      span.label Enter the time to work per interval 
+      span.label Enter the name of your task
+      br
+      input(type="text", placeholder="task name", name="task")
+    div.input
+      span.label Enter the work interval
       br
       input(type="number", min="1", max="60", value="25", name="work")
     div.input
-      span.label Enter the time to rest per interval  
+      span.label Enter the rest interval
       br
       input(type="number",min="1", max="60", value="5", name="rest")
     div.actions
