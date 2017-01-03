@@ -1,6 +1,6 @@
 var interval = null;
 var workMode = true;
-var secs = 0,
+var secs = 5,
     mins = 0,
     work = 0,
     rest = 0;
@@ -19,13 +19,19 @@ function start() {
 
 
 function createClock(task, work, rest) {
+    
     // dimensions of the clock
     var width = 500,
         height = 500,
         radius = 250,
         spacing = 0.1;
+    // setup svg
+    var svg = d3.select("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .append("g")
+        .attr("transform", "translate("+width/2+","+height/2+")");
     // time formate
-
     var formatSecond = d3.timeFormat("%-S seconds"),
         formatMinute = d3.timeFormat("%-M minutes"),
         formatHour = d3.timeFormat("%-H hours"),
@@ -36,12 +42,7 @@ function createClock(task, work, rest) {
     var color = d3.scaleLinear()
         .range(["hsl(-180,60%,50%)", "hsl(180,60%,50%)"])
         .interpolate(function(a, b) { var i = d3.interpolateString(a, b); return function(t) { return d3.hsl(i(t)); }; });
-    // setup svg
-    var svg = d3.select("body").append("svg")
-        .attr("width", width)
-        .attr("height", height)
-        .append("g")
-        .attr("transform", "translate("+width/2+","+height/2+")");
+
     // arc body
     var arcBody = d3.arc()
         .startAngle(0)
@@ -55,8 +56,12 @@ function createClock(task, work, rest) {
         .innerRadius(function(d) { return (d.index + spacing/2)*radius; })
         .outerRadius(function(d) { return (d.index + spacing/2)*radius; });
     // fields 
+    var fields = fields();
+    console.log(fields[0].value);
+    console.log(fields[1].value);
+
     var field = svg.selectAll("g")
-        .data(fields())
+        .data(fields)
         .enter()
         .append("g");
     field.append("path")
@@ -64,6 +69,7 @@ function createClock(task, work, rest) {
     field.append("path")
         .attr("id", function(d, i) { return "arc-center-"+i; })
         .attr("class", "arc-center");
+    console.log(field);
     // time formatting for d3
     secs = 0;
     mins = 0;
@@ -90,12 +96,21 @@ function createClock(task, work, rest) {
         }
         console.log(mins+":"+secs);
         console.log(field);
-        field.each(function(d) { this.value = d.value; })
+        
+        field.each( function(d) { 
+            console.log(this.value);
+            console.log(d.value);
+            this.value = d.value; 
+        })
             .data(fields)
-            .each(function(d) { d.previousValue = this.value; })
-            .each(fieldTransition)
+            .each( function(d) { 
+                console.log(d.previousValue);
+                console.log(this.value);                
+                d.previousValue = this.value; 
+            })
             .transition()
             .duration("500")
+            .on("start", fieldTransition);
         setTimeout(tick, 1000 - Date.now() % 1000);
     }
 
@@ -121,8 +136,8 @@ function createClock(task, work, rest) {
     function fields() {
         var now = new Date;
         return[
-            {index: 0.7, value: now.getSeconds/(60)},
-            {index: 0.6, value: now.getMinutes/(60)}
+            {index: 0.7, value: secs},
+            {index: 0.6, value: mins}
         ];
     }
 }
