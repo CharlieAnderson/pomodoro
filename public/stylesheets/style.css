@@ -8,12 +8,19 @@ span {
   color: #ddd
 }
 
-.arc-text {
-  font: 16px sans-serif;
+form {
+  margin: 0 auto;
 }
 
-.arc-center {
-  fill: none;
+.polar-svg {
+  display: block;
+  margin: 0 auto;
+}
+
+.text {
+  color: #ddd;
+  font-size: 32px;
+  font-weight: bold;
 }
 
 

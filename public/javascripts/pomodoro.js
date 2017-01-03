@@ -3,6 +3,7 @@ var workMode = true;
 var tau = 2*Math.PI;
 var secs = 0.0,
     mins = 0.0,
+    minsElapsed = 0.0,
     work = 0.0,
     rest = 0.0;
 
@@ -10,6 +11,12 @@ function start() {
     var task = (String)(document.getElementById("input-task").value);
     work = (document.getElementById("input-work").value)/1;
     rest = (document.getElementById("input-rest").value)/1;
+    stop();
+    mins = work;
+    createClock(task, work, rest);
+}
+
+function stop() {
     var svg = document.getElementById("polar-svg");
     // reset everything
     while(svg.lastChild) {
@@ -20,17 +27,15 @@ function start() {
     }
     secs = 0;
     mins = 0;
+    minsElapsed = 0;
     workMode = true;
-    createClock(task, work, rest);
-    console.log(work+rest);
-    console.log("starting " + task + " " + work + "/" + rest);
 }
-
 
 function createClock(task, work, rest) {
     
     // setup the arcs for the clock
     var arc = d3.arc();
+    var timeText = "00:00";
     var arcSeconds = d3.arc()
         .innerRadius(170)
         .outerRadius(220)
@@ -54,7 +59,7 @@ function createClock(task, work, rest) {
         .attr("d", arcSeconds);
     // setup the main(foreground) arc, which will move and fill in the background
     var foregroundSeconds = gSeconds.append("path")
-        .datum({endAngle: (secs)/(60)*(tau)})
+        .datum({endAngle: (60-secs)/(60)*(tau)})
         .style("fill", "#FF0043")
         .attr("d", arcSeconds); 
     // setup the background arc, which will be filled by the main arc
@@ -64,25 +69,31 @@ function createClock(task, work, rest) {
         .attr("d", arcMinutes);
     // setup the main(foreground) arc, which will move and fill in the background
     var foregroundMinutes = gMinutes.append("path")
-        .datum({endAngle: (mins)/(60)*(tau)})
+        .datum({endAngle: (minsElapsed)/(60)*(tau)})
         .style("fill", "#C00043")
         .attr("d", arcMinutes);
-
+    
+    var clockText = gMinutes.append("text")
+        .text(timeText)
+        .style("font-weight", "bold")
+        .attr("text-anchor", "middle")
+        .attr("font-size", "32px")
     interval = d3.interval(function() {
-        secs++;
+        secs--;
         console.log(secs);
+        if(secs < 0) {
+            secs = 59;
+            mins--;
+            minsElapsed++;
+        }
+        timeText = getTimeText();
+        clockText.text(timeText);
         foregroundSeconds.transition()
             .duration(500)
-            .attrTween("d", arcTween((secs)/(60)*tau, arcSeconds));
+            .attrTween("d", arcTween((60-secs)/(60)*tau, arcSeconds));
         foregroundMinutes.transition()
             .duration(500)
-            .attrTween("d", arcTween((mins)/(60)*tau, arcMinutes));
-
-        if(secs == 60) {
-            secs = 0;
-            mins++;
-        }
-
+            .attrTween("d", arcTween((minsElapsed)/(60)*tau, arcMinutes));
         if(workMode) {
             foregroundSeconds.style("fill", "#FF0043")
             foregroundMinutes.style("fill", "#C00043")
@@ -92,14 +103,16 @@ function createClock(task, work, rest) {
             foregroundMinutes.style("fill", "#00E174")
         }
 
-        if(workMode && mins === work) {
-            mins = 0;
+        if(workMode && mins === 0 && secs === 0) {
+            mins = rest;
             secs = 0;
+            minsElapsed = 0;
             workMode = false;
         }
-        else if (!workMode && mins === rest) {
-            mins = 0;
+        else if (!workMode && mins === 0 && secs === 0) {
+            mins = work;
             secs = 0;
+            minsElapsed = 0;
             workMode = true;
         } 
     }, 1000);
@@ -112,6 +125,18 @@ function createClock(task, work, rest) {
                 return arc(d);
             };
         };
+    }
+
+    function getTimeText() {
+        var secsText = ""+secs;
+        var minsText = ""+mins;
+        if(secs < 10) {
+            secsText = "0"+secsText;
+        }
+        if(mins < 10) {
+            minsText = "0"+minsText;
+        }
+        return minsText+":"+secsText;
     }
 }
 
