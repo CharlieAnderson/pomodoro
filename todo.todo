@@ -5,3 +5,5 @@
 ✔ change color on work/rest @done (1/3/2017, 11:23:30 AM)
 ☐ have the html tab title display the time and work/rest
 ☐ make the controls and general UI better
+☐ have the # of seconds and minutes elapsed displayed on the respective arcs
+☐ currently, the clock stops when tab not in view, bug or feature?

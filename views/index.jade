@@ -3,21 +3,28 @@ extends layout
 block content
   h1= title
   form(name="enter timer settings", method="post")
-    div.input
-      span.label Enter the name of your task
+    div(class="input-div").input
+      span.label Name of your task
       br
       input(type="text", placeholder="task name", name="task" id="input-task")
-    div.input
-      span.label Enter the work interval:
+    div(class="input-div").input
+      span.label Work interval:
       br
       input(type="number", min="1", max="60", value="25", name="work", id="input-work") 
       span.label  minutes
-    div.input
-      span.label Enter the rest interval:
+    div(class="input-div").input
+      span.label Rest interval:
       br
       input(type="number",min="1", max="60", value="5", name="rest", id="input-rest") 
       span.label  minutes
-    div.actions
+    div(class="input-div").actions
+      span.label Which interval to start with?
+      br
+      input(type="radio" name="toggle" id="toggle-off" value="0" hidden checked)
+      label(for="toggle-off" class="switch switch-off") Work
+      input(type="radio" name="toggle" id="toggle-on" value="1" hidden)
+      label(for="toggle-on" class="switch switch-on") Rest
+    div(class="input-div").actions
       input(type="submit", value="start timer", onclick="start()")
   div(id="svg-div")
     svg(id="polar-svg", width="500", height="500")

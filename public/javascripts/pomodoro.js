@@ -3,21 +3,27 @@ var workMode = true;
 var tau = 2*Math.PI;
 var secs = 0.0,
     mins = 0.0,
-    minsElapsed = 0.0,
+    minsElapsed = -1.0,
     work = 0.0,
     rest = 0.0;
 
 function start() {
     var task = (String)(document.getElementById("input-task").value);
+    var toggleChecked = document.getElementById("toggle-off").checked;
+    workMode = toggleChecked;
     work = (document.getElementById("input-work").value)/1;
     rest = (document.getElementById("input-rest").value)/1;
     stop();
-    mins = work;
+    if(workMode)
+        mins = work;
+    else
+        mins = rest;
     createClock(task, work, rest);
 }
 
 function stop() {
     var svg = document.getElementById("polar-svg");
+    var toggleChecked = document.getElementById("toggle-off").checked;
     // reset everything
     while(svg.lastChild) {
         svg.removeChild(svg.lastChild)
@@ -28,13 +34,10 @@ function stop() {
     secs = 0;
     mins = 0;
     minsElapsed = 0;
-    workMode = true;
+    workMode = toggleChecked;
 }
 
 function createClock(task, work, rest) {
-    // temporary? fix for having the "extra" minute show up when seconds goes from 00 to 59 in the start
-    mins--;
-    minsElapsed--;
     // setup the arcs for the clock
     var arc = d3.arc();
     var timeText = "00:00";
@@ -57,7 +60,7 @@ function createClock(task, work, rest) {
     // setup the background arc, which will be filled by the main arc
     var backgroundSeconds = gSeconds.append("path")
         .datum({endAngle: tau})
-        .style("fill", "#ccc")
+        .style("fill", "#eee")
         .attr("d", arcSeconds);
     // setup the main(foreground) arc, which will move and fill in the background
     var foregroundSeconds = gSeconds.append("path")
@@ -67,19 +70,22 @@ function createClock(task, work, rest) {
     // setup the background arc, which will be filled by the main arc
     var backgroundMinutes = gMinutes.append("path")
         .datum({endAngle: tau})
-        .style("fill", "#ccc")
+        .style("fill", "#eee")
         .attr("d", arcMinutes);
     // setup the main(foreground) arc, which will move and fill in the background
     var foregroundMinutes = gMinutes.append("path")
         .datum({endAngle: (minsElapsed)/(60)*(tau)})
         .style("fill", "#C00043")
         .attr("d", arcMinutes);
-    
+    // the current time as a text element
     var clockText = gMinutes.append("text")
         .text(timeText)
         .style("font-weight", "bold")
+        .style("fill", "#eee")
         .attr("text-anchor", "middle")
-        .attr("font-size", "32px")
+        .attr("font-size", "48px")
+        .attr("font-family", "helvetica");
+
     interval = d3.interval(function() {
         secs--;
         console.log(secs);
@@ -104,17 +110,16 @@ function createClock(task, work, rest) {
             foregroundSeconds.style("fill", "#34F898")
             foregroundMinutes.style("fill", "#00E174")
         }
-
         if(workMode && mins === 0 && secs === 0) {
             mins = rest;
             secs = 0;
-            minsElapsed = 0;
+            minsElapsed = -1;
             workMode = false;
         }
         else if (!workMode && mins === 0 && secs === 0) {
             mins = work;
             secs = 0;
-            minsElapsed = 0;
+            minsElapsed = -1;
             workMode = true;
         } 
     }, 1000);
