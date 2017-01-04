@@ -32,7 +32,9 @@ function stop() {
 }
 
 function createClock(task, work, rest) {
-    
+    // temporary? fix for having the "extra" minute show up when seconds goes from 00 to 59 in the start
+    mins--;
+    minsElapsed--;
     // setup the arcs for the clock
     var arc = d3.arc();
     var timeText = "00:00";
