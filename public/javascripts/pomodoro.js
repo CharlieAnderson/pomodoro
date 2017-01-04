@@ -1,9 +1,9 @@
 var interval = null;
 var workMode = true;
 var tau = 2*Math.PI;
-var secs = 0.0,
+var secs = 0,
     mins = 0.0,
-    minsElapsed = -1.0,
+    minsElapsed = 0.0,
     work = 0.0,
     rest = 0.0;
 
@@ -74,7 +74,7 @@ function createClock(task, work, rest) {
         .attr("d", arcMinutes);
     // setup the main(foreground) arc, which will move and fill in the background
     var foregroundMinutes = gMinutes.append("path")
-        .datum({endAngle: (minsElapsed)/(60)*(tau)})
+        .datum({endAngle: (minsElapsed-1)/(mins)*(tau)})
         .style("fill", "#C00043")
         .attr("d", arcMinutes);
     // the current time as a text element
@@ -91,17 +91,17 @@ function createClock(task, work, rest) {
         console.log(secs);
         if(secs < 0) {
             secs = 59;
-            mins--;
             minsElapsed++;
         }
+        console.log(minsElapsed/mins);
         timeText = getTimeText();
         clockText.text(timeText);
         foregroundSeconds.transition()
-            .duration(500)
+            .duration(1000)
             .attrTween("d", arcTween((60-secs)/(60)*tau, arcSeconds));
         foregroundMinutes.transition()
-            .duration(500)
-            .attrTween("d", arcTween((minsElapsed)/(60)*tau, arcMinutes));
+            .duration(1000)
+            .attrTween("d", arcTween((minsElapsed-1)/(mins)*tau, arcMinutes));
         if(workMode) {
             foregroundSeconds.style("fill", "#FF0043")
             foregroundMinutes.style("fill", "#C00043")
@@ -110,16 +110,16 @@ function createClock(task, work, rest) {
             foregroundSeconds.style("fill", "#34F898")
             foregroundMinutes.style("fill", "#00E174")
         }
-        if(workMode && mins === 0 && secs === 0) {
+        if(workMode && minsElapsed === work && secs === 0) {
             mins = rest;
             secs = 0;
-            minsElapsed = -1;
+            minsElapsed = 0;
             workMode = false;
         }
-        else if (!workMode && mins === 0 && secs === 0) {
+        else if (!workMode && minsElapsed === rest && secs === 0) {
             mins = work;
             secs = 0;
-            minsElapsed = -1;
+            minsElapsed = 0;
             workMode = true;
         } 
     }, 1000);
@@ -135,8 +135,8 @@ function createClock(task, work, rest) {
     }
 
     function getTimeText() {
-        var secsText = ""+secs;
-        var minsText = ""+mins;
+        var secsText = secs;
+        var minsText = mins-minsElapsed;
         if(secs < 10) {
             secsText = "0"+secsText;
         }

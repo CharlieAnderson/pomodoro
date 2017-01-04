@@ -1,8 +1,10 @@
 extends layout
 
 block content
+  script(type='text/javascript' src='https://d3js.org/d3.v4.min.js')
+  script(type='text/javascript' src='/javascripts/pomodoro.js')
   h1= title
-  form(name="enter timer settings", method="post")
+  form(name="enter timer settings", method="post", onsubmit="event.preventDefault();")
     div(class="input-div").input
       span.label Name of your task
       br
@@ -25,7 +27,7 @@ block content
       input(type="radio" name="toggle" id="toggle-on" value="1" hidden)
       label(for="toggle-on" class="switch switch-on") Rest
     div(class="input-div").actions
-      input(type="submit", value="start timer", onclick="start()")
+      input(type="submit", value="start timer", onclick="start()" )
   div(id="svg-div")
     svg(id="polar-svg", width="500", height="500")
 
