@@ -4,6 +4,10 @@ body {
   width: 1000px;
 }
 
+.content-div {
+  margin: 0 auto;
+}
+
 .label {
   color: #eee;
   font-size: 18px;
@@ -25,9 +29,8 @@ form {
   margin: 10px 10px;
 }
 
-#polar-svg {
-  display: block;
-  margin: auto;
+.number-input {
+
 }
 
 .switch {
@@ -56,5 +59,40 @@ input[type="radio"]:checked + .switch-on {
 
 input[type="radio"]:checked + .switch-off {
   background-color: #dd4a38;
+}
+
+.svg-html-div {
+  margin: 0 auto;
+}
+
+#pause-button {
+  margin: 0 auto;
+  z-index: 999;
+  position: absolute;
+}
+
+#polar-svg {
+  margin: auto;
+  z-index: -999;
+  position:relative;
+}
+
+.start-button {
+  color: #eee;
+  display: inline-block;
+  font-size: 18px;
+  font-weight: 600;
+  font-family: Helvetica;
+  line-height: 1.5em;
+  background: #007ACC;
+  text-decoration: none;
+  border: none;
+  border-radius: 3px;
+  margin-right: 10px;
+}
+
+.start-button:focus {
+  text-decoration: none;
+  border: none;
 }
 

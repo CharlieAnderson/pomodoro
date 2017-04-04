@@ -10,3 +10,6 @@
     (problem of running locally? or from sending too many requests somehow?)
 ☐ make the svg responsive
 ☐ add a pause/continue button under the time text in the ecenter of the clock
+☐ right now there's a bug where if you enter an invalid number and then hit enter, the timer starts even thought the input is bad
+
+
